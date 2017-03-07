@@ -54,26 +54,17 @@ let flatten node_list =
         | Many xs :: t -> aux (aux acc xs) t
     in reverse (aux [] node_list);;
 
-//wrong
 let pack list = 
-    let rec gather acc char l =
+    let rec aux current acc l =
         match l with
-        | [] -> (acc, l)
-        | h :: t -> 
-            if h = char 
-            then gather (h :: acc) char t
-            else (acc, l)
-    in
-        let rec aux acc l =
-            match l with
-            | a :: (b :: _ as t) -> 
-                if a = b
-                then 
-                    let set, tail = gather [a] a t
-                    in aux (set :: acc) tail
-                else aux ([a] :: acc) t
-            | _ -> acc
-        in reverse (aux [] list);;
+        | [] -> acc
+        //todo
+        | [x] -> (x :: current) :: acc
+        | a :: (b :: _ as t) -> 
+            if a = b
+            then aux (a :: current) acc t
+            else aux [] ((a :: current) :: acc) t
+    in reverse (aux [] [] list);;
 
 let encode list =
     let rec aux acc count list =
