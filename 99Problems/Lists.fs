@@ -50,8 +50,8 @@ let flatten node_list =
     let rec aux acc n_list =
         match n_list with
         | [] -> acc
-        | One x :: t -> aux (x :: acc)  t
-        | Many xs :: t -> aux (aux acc xs) t
+        | node.One x :: t -> aux (x :: acc)  t
+        | node.Many xs :: t -> aux (aux acc xs) t
     in reverse (aux [] node_list);;
 
 let pack list = 
@@ -76,3 +76,22 @@ let encode list =
             then aux acc (count+1) t
             else aux ((count, a) :: acc) 1 t
     in reverse (aux [] 1 list);;
+
+type 'a encoding =
+    | One of 'a
+    | Many of int * 'a;;
+
+let modified_encode list = 
+    let helper count char =
+        if count = 1 then encoding.One char
+        else encoding.Many (count, char)
+    in
+        let rec aux acc count list =
+            match list with
+            | [] -> acc
+            | [a] -> (helper count a) :: acc
+            | a :: (b :: _ as t) ->
+                if a = b
+                then aux acc (count+1) t
+                else aux ((helper count a) :: acc) 1 t
+        in reverse (aux [] 1 list);;
