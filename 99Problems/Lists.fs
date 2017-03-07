@@ -54,6 +54,7 @@ let flatten node_list =
         | Many xs :: t -> aux (aux acc xs) t
     in reverse (aux [] node_list);;
 
+//wrong
 let pack list = 
     let rec gather acc char l =
         match l with
@@ -73,3 +74,14 @@ let pack list =
                 else aux ([a] :: acc) t
             | _ -> acc
         in reverse (aux [] list);;
+
+let encode list =
+    let rec aux acc count list =
+        match list with
+        | [] -> acc
+        | [a] -> (count, a) :: acc
+        | a :: (b :: _ as t) ->
+            if a = b
+            then aux acc (count+1) t
+            else aux ((count, a) :: acc) 1 t
+    in reverse (aux [] 1 list);;
