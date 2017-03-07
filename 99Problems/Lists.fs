@@ -95,3 +95,16 @@ let modified_encode list =
                 then aux acc (count+1) t
                 else aux ((helper count a) :: acc) 1 t
         in reverse (aux [] 1 list);;
+
+let modified_decode list =
+    let rec repeat n char =
+        match n with
+        | _ when n > 0 -> char :: repeat (n - 1) char
+        | _ -> []
+    in
+        let rec aux acc list =
+            match list with
+            | [] -> acc
+            | encoding.One h :: t -> aux (h :: acc) t
+            | (encoding.Many (count, char)) :: t -> aux ((repeat count char) @ acc) t
+        in reverse (aux [] list);;
